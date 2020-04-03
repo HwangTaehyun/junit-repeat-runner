@@ -22,30 +22,45 @@ public class RepeatRunner extends BlockJUnit4ClassRunner {
     @Override
     protected void runChild(final FrameworkMethod method, RunNotifier notifier) {
         logger.info("=============Repetition Test Start=============");
-
+        /* add listener */
         RunListener listener = new RepeatRunListener();
         notifier.addListener(listener);
 
+        /* handle ignore Annot. */
         Description description = describeChild(method);
         if (isIgnored(method)) {
             notifier.fireTestIgnored(description);
             return;
         }
-        // Repeat Annotation이 없을 경우 1번만 실행
+
+        /* handle no Repeat Annot. */
         if (method.getAnnotation(Repeat.class) == null) {
             runLeaf(methodBlock(method), description, notifier);
             return;
-        } else {
-            int count = method.getAnnotation(Repeat.class).count();
-            if (count < 1) {
-                return; // throw is needed
-            }
-            for (int i =0; i<count; ++i) {
-                runLeaf(methodBlock(method), description, notifier);
-            }
         }
 
-        // RepeatTestInfo(totalCount, passCount, failCount)를 가져와 결과 요약 로그 작성
+        /* get repetition count */
+        int count = method.getAnnotation(Repeat.class).count();
+
+        /* if count < 1, throw IllegalArgumentException */
+        if (count < 1) {
+            throw new IllegalArgumentException("count값은 1 이상이어야 합니다.");
+        }
+
+        /* set testName */
+        String testName = "";
+        if (method.getAnnotation(Repeat.class).testName().isEmpty()) {
+            testName = method.getName();
+        } else {
+            testName = method.getAnnotation(Repeat.class).testName();
+        }
+
+        /* repeat unit test */
+        for (int i =0; i<count; ++i) {
+            runLeaf(methodBlock(method), description, notifier);
+        }
+
+        /* log repetition test summary with RepeatTestInfo(totalCount, passCount, failCount) */
         Class<?> cls = null;
         try {
             cls = Class.forName("com.naver.commerce_platform.junit."+"RepeatRunListener");
@@ -53,14 +68,7 @@ public class RepeatRunner extends BlockJUnit4ClassRunner {
             Method getTotalCount = cls.getMethod("getTotalCount", String.class);
             Method getPassCount = cls.getMethod("getPassCount", String.class);
             Method getFailCount = cls.getMethod("getFailCount", String.class);
-            String testName = "";
             StringBuffer logMsg = new StringBuffer("");
-
-            if (method.getAnnotation(Repeat.class).testName().isEmpty()) {
-                testName = method.getName();
-            } else {
-                testName = method.getAnnotation(Repeat.class).testName();
-            }
 
             logMsg.append("RepetitionTest: ")
                     .append(testName)
@@ -72,9 +80,8 @@ public class RepeatRunner extends BlockJUnit4ClassRunner {
                     .append(getFailCount.invoke(obj,method.getName()));
             logger.info(String.valueOf(logMsg));
 
-            //remove Listener
+            /* remove listener */
             notifier.removeListener(listener);
-
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } catch (InstantiationException e) {

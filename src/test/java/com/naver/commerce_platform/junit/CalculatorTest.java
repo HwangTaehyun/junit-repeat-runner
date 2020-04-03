@@ -12,7 +12,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @RunWith(RepeatRunner.class)
 public class CalculatorTest {
-
     static final Logger logger =
             LoggerFactory.getLogger(CalculatorTest.class);
 
