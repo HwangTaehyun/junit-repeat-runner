@@ -3,8 +3,8 @@ package com.naver.commerce_platform.junit;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 @RunWith(RepeatRunner.class)
 public class CalculatorTest {
@@ -21,7 +21,7 @@ public class CalculatorTest {
         int result = calculator.add(x,y);
 
         //Assert
-        assertThat(result, equalTo(8));
+        assertThat(result).isEqualTo(8);
     }
 
     @Test
@@ -36,6 +36,6 @@ public class CalculatorTest {
         int result = calculator.add(x,y);
 
         //Assert
-        assertThat(result, equalTo(10));
+        assertThat(result).isEqualTo(10);
     }
 }
