@@ -5,22 +5,22 @@ import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
-import org.junit.runners.model.Statement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 public class RepeatRunner extends BlockJUnit4ClassRunner {
+    static final Logger logger =
+            LoggerFactory.getLogger(CalculatorTest.class);
     public RepeatRunner(Class<?> klass) throws InitializationError {
         super(klass);
     }
 
     @Override
-    protected Statement methodInvoker(FrameworkMethod method, Object test) {
-        System.out.println("invoking: " + method.getName());
-        return super.methodInvoker(method, test);
-    }
-
-    @Override
     protected void runChild(final FrameworkMethod method, RunNotifier notifier) {
-
+        logger.info("=============Repetition Test Start=============");
         Description description = describeChild(method);
         if (isIgnored(method)) {
             notifier.fireTestIgnored(description);
@@ -39,8 +39,35 @@ public class RepeatRunner extends BlockJUnit4ClassRunner {
                 runLeaf(methodBlock(method), description, notifier);
             }
         }
+
+        // RepeatTestInfo(totalCount, passCount, failCount)를 가져와 결과 요약 로그 작성
+        Class<?> cls = null;
+        try {
+            cls = Class.forName("com.naver.commerce_platform.junit."+"RepeatTestWatcher");
+            Object obj = cls.getDeclaredConstructor().newInstance();
+            Method getTotalCount = cls.getMethod("getTotalCount", String.class);
+            Method getPassCount = cls.getMethod("getPassCount", String.class);
+            Method getFailCount = cls.getMethod("getFailCount", String.class);
+            StringBuffer logMsg = new StringBuffer("");
+            logMsg.append("RepetitionTest: ")
+                    .append(method.getName())
+                    .append(", total_count: ")
+                    .append(getTotalCount.invoke(obj,method.getName()))
+                    .append(", pass_count: ")
+                    .append(getPassCount.invoke(obj,method.getName()))
+                    .append(", fail_count: ")
+                    .append(getFailCount.invoke(obj,method.getName()));
+            logger.info(String.valueOf(logMsg));
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
     }
-
-
-
 }
