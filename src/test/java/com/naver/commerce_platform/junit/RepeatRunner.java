@@ -71,6 +71,10 @@ public class RepeatRunner extends BlockJUnit4ClassRunner {
                     .append(", fail_count: ")
                     .append(getFailCount.invoke(obj,method.getName()));
             logger.info(String.valueOf(logMsg));
+
+            //remove Listener
+            notifier.removeListener(listener);
+
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } catch (InstantiationException e) {
