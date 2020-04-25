@@ -14,8 +14,8 @@ public class RepeatRunListener extends RunListener {
 
     static final Logger logger =
             LoggerFactory.getLogger(CalculatorTest.class);
-    static Map<String, RepeatTestInfo> testResult = new HashMap<>();
-    private static final Description FAILED = Description.createTestDescription("failed", "failed");
+    private static Map<String, RepeatTestInfo> testResult = new HashMap<>();
+    private boolean failed = false;
 
     public int getTotalCount(String methodName){
         return this.testResult.get(methodName).totalCount;
@@ -44,7 +44,7 @@ public class RepeatRunListener extends RunListener {
 
     @Override
     public void testFinished(Description description) throws Exception {
-        if (!description.getChildren().contains(FAILED)) {
+        if (!this.failed) {
             // Process passed tests here...
             logger.info("{} unit test succeeded.", description.getMethodName());
             RepeatTestInfo testInfo = testResult.get(description.getMethodName());
@@ -55,6 +55,7 @@ public class RepeatRunListener extends RunListener {
         }
         logger.info("{} unit test finished...", description);
         testResult.get(description.getMethodName()).totalCount++;
+        this.failed=false;
     }
 
     @Override
@@ -65,7 +66,7 @@ public class RepeatRunListener extends RunListener {
             testResult.put(failure.getDescription().getMethodName(),new RepeatTestInfo());
         }
         testResult.get(failure.getDescription().getMethodName()).failCount++;
-        failure.getDescription().addChild(FAILED);
+        this.failed = true;
     }
 
     @Override
