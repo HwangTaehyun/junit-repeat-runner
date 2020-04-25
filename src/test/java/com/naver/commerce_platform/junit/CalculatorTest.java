@@ -17,6 +17,21 @@ public class CalculatorTest {
             LoggerFactory.getLogger(CalculatorTest.class);
 
     @Test
+    @Repeat(count = 5, testName = "random-assert-test")
+    public void testRandomAssert() {
+        //Arrange
+        Calculator calculator = new Calculator();
+        int x = (int)(2*Math.random());
+        int y = (int)(2*Math.random());
+
+        //Act
+        int result = calculator.add(x,y);
+
+        //Assert
+        assertThat(result).isEqualTo(1);
+    }
+
+    @Test
     @Repeat(count = 2, testName = "repeat-2")
     public void testMyCode2TimesWithName() {
         //Arrange
