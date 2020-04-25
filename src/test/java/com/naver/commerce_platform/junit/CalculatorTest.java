@@ -20,8 +20,8 @@ public class CalculatorTest {
     public final TestRule watchman = new RepeatTestWatcher();
 
     @Test
-    @Repeat(count = 5)
-    public void testMyCode5Times() {
+    @Repeat(count = 2, testName = "repeat-2")
+    public void testMyCode2TimesWithName() {
         //Arrange
         Calculator calculator = new Calculator();
         int x = 3;
@@ -35,8 +35,23 @@ public class CalculatorTest {
     }
 
     @Test
-    @Repeat(count = 10)
-    public void testMyCode10Times() {
+    @Repeat(count = 2)
+    public void testMyCode2Times() {
+        //Arrange
+        Calculator calculator = new Calculator();
+        int x = 3;
+        int y = 5;
+
+        //Act
+        int result = calculator.add(x,y);
+
+        //Assert
+        assertThat(result).isEqualTo(8);
+    }
+
+    @Test
+    @Repeat(count = 4)
+    public void testMyCode4Times() {
         //Arrange
         Calculator calculator = new Calculator();
         int x = 5;
