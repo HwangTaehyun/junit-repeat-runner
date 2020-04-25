@@ -1,6 +1,7 @@
 package com.naver.commerce_platform.junit;
 
 import org.junit.runner.Description;
+import org.junit.runner.notification.RunListener;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
@@ -21,6 +22,10 @@ public class RepeatRunner extends BlockJUnit4ClassRunner {
     @Override
     protected void runChild(final FrameworkMethod method, RunNotifier notifier) {
         logger.info("=============Repetition Test Start=============");
+
+        RunListener listener = new RepeatRunListener();
+        notifier.addListener(listener);
+
         Description description = describeChild(method);
         if (isIgnored(method)) {
             notifier.fireTestIgnored(description);
@@ -43,7 +48,7 @@ public class RepeatRunner extends BlockJUnit4ClassRunner {
         // RepeatTestInfo(totalCount, passCount, failCount)를 가져와 결과 요약 로그 작성
         Class<?> cls = null;
         try {
-            cls = Class.forName("com.naver.commerce_platform.junit."+"RepeatTestWatcher");
+            cls = Class.forName("com.naver.commerce_platform.junit."+"RepeatRunListener");
             Object obj = cls.getDeclaredConstructor().newInstance();
             Method getTotalCount = cls.getMethod("getTotalCount", String.class);
             Method getPassCount = cls.getMethod("getPassCount", String.class);
@@ -66,6 +71,10 @@ public class RepeatRunner extends BlockJUnit4ClassRunner {
                     .append(", fail_count: ")
                     .append(getFailCount.invoke(obj,method.getName()));
             logger.info(String.valueOf(logMsg));
+
+            //remove Listener
+            notifier.removeListener(listener);
+
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } catch (InstantiationException e) {
