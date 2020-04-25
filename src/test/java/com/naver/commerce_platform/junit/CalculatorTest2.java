@@ -11,17 +11,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 
 @RunWith(RepeatRunner.class)
-public class CalculatorTest {
+public class CalculatorTest2 {
 
     static final Logger logger =
-            LoggerFactory.getLogger(CalculatorTest.class);
+            LoggerFactory.getLogger(CalculatorTest2.class);
 
     @Rule
     public final TestRule watchman = new RepeatTestWatcher();
 
     @Test
-    @Repeat(count = 2, testName = "repeat-2")
-    public void testMyCode2TimesWithName() {
+    @Repeat(count = 5)
+    public void testMyCode5Times() {
         //Arrange
         Calculator calculator = new Calculator();
         int x = 3;
@@ -35,23 +35,8 @@ public class CalculatorTest {
     }
 
     @Test
-    @Repeat(count = 2)
-    public void testMyCode2Times() {
-        //Arrange
-        Calculator calculator = new Calculator();
-        int x = 3;
-        int y = 5;
-
-        //Act
-        int result = calculator.add(x,y);
-
-        //Assert
-        assertThat(result).isEqualTo(8);
-    }
-
-    @Test
-    @Repeat(count = 4)
-    public void testMyCode4Times() {
+    @Repeat(count = 10)
+    public void testMyCode10Times() {
         //Arrange
         Calculator calculator = new Calculator();
         int x = 5;

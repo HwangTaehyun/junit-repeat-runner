@@ -48,9 +48,17 @@ public class RepeatRunner extends BlockJUnit4ClassRunner {
             Method getTotalCount = cls.getMethod("getTotalCount", String.class);
             Method getPassCount = cls.getMethod("getPassCount", String.class);
             Method getFailCount = cls.getMethod("getFailCount", String.class);
+            String testName = "";
             StringBuffer logMsg = new StringBuffer("");
+
+            if (method.getAnnotation(Repeat.class).testName().isEmpty()) {
+                testName = method.getName();
+            } else {
+                testName = method.getAnnotation(Repeat.class).testName();
+            }
+
             logMsg.append("RepetitionTest: ")
-                    .append(method.getName())
+                    .append(testName)
                     .append(", total_count: ")
                     .append(getTotalCount.invoke(obj,method.getName()))
                     .append(", pass_count: ")

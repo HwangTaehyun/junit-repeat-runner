@@ -9,6 +9,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Repeat {
     int count() default 1;
+    String testName() default "";
 }
 
 
