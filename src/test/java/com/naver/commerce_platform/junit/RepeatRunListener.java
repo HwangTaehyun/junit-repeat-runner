@@ -11,10 +11,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class RepeatRunListener extends RunListener {
-
     static final Logger logger =
             LoggerFactory.getLogger(CalculatorTest.class);
+    /* 각 unit test의 repetition test result info 관리를 위한 컨테이너 */
     private static Map<String, RepeatTestInfo> testResult = new HashMap<>();
+    /* fail flag */
     private boolean failed = false;
 
     public int getTotalCount(String methodName){
@@ -45,7 +46,7 @@ public class RepeatRunListener extends RunListener {
     @Override
     public void testFinished(Description description) throws Exception {
         if (!this.failed) {
-            // Process passed tests here...
+            /* Process passed tests here */
             logger.info("{} unit test succeeded.", description.getMethodName());
             RepeatTestInfo testInfo = testResult.get(description.getMethodName());
             if (testInfo == null) {
@@ -60,6 +61,7 @@ public class RepeatRunListener extends RunListener {
 
     @Override
     public void testFailure(Failure failure) throws Exception {
+        /* Process failed tests here */
         logger.error("{} unit test failed with {}.", failure.getDescription().getMethodName(), failure.getMessage());
         RepeatTestInfo testInfo = testResult.get(failure.getDescription().getMethodName());
         if (testInfo == null) {
@@ -71,6 +73,7 @@ public class RepeatRunListener extends RunListener {
 
     @Override
     public void testIgnored(Description description) throws Exception {
+        /* Process ignored tests here */
         logger.info("Ignored: " + description.getMethodName());
     }
 }

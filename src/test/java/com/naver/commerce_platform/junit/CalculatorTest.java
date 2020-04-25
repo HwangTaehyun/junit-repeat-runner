@@ -12,9 +12,23 @@ import static org.assertj.core.api.Assertions.assertThat;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @RunWith(RepeatRunner.class)
 public class CalculatorTest {
-
     static final Logger logger =
             LoggerFactory.getLogger(CalculatorTest.class);
+
+    @Test
+    @Repeat(count = -1, testName = "invalid-repeat-count-test")
+    public void testInvalidCountRepeat() {
+        //Arrange
+        Calculator calculator = new Calculator();
+        int x = (int)(2*Math.random());
+        int y = (int)(2*Math.random());
+
+        //Act
+        int result = calculator.add(x,y);
+
+        //Assert
+        assertThat(result).isEqualTo(1);
+    }
 
     @Test
     @Repeat(count = 5, testName = "random-assert-test")
