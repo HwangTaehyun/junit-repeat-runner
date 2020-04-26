@@ -37,7 +37,12 @@ public class RepeatRunner extends BlockJUnit4ClassRunner {
 
         /* handle no Repeat Annot. */
         if (method.getAnnotation(Repeat.class) == null) {
+            /* set testName for listener */
+            listener.setTestName(description.getMethodName());
+            /* run once */
             runLeaf(methodBlock(method), description, notifier);
+            /* remove listener */
+            notifier.removeListener(listener);
             return;
         }
 

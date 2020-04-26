@@ -92,4 +92,18 @@ public class CalculatorTest {
         //Assert
         assertThat(result).isEqualTo(10);
     }
+
+    @Test
+    public void testNoRepeatAnnotation() {
+        //Arrange
+        Calculator calculator = new Calculator();
+        int x = (int)(2*Math.random());
+        int y = (int)(2*Math.random());
+
+        //Act
+        int result = calculator.add(x,y);
+
+        //Assert
+        assertThat(result).isEqualTo(2);
+    }
 }
