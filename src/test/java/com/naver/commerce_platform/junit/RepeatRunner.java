@@ -1,7 +1,6 @@
 package com.naver.commerce_platform.junit;
 
 import org.junit.runner.Description;
-import org.junit.runner.notification.RunListener;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
@@ -23,7 +22,7 @@ public class RepeatRunner extends BlockJUnit4ClassRunner {
     protected void runChild(final FrameworkMethod method, RunNotifier notifier) {
         logger.info("=============Repetition Test Start=============");
         /* add listener */
-        RunListener listener = new RepeatRunListener();
+        RepeatRunListener listener = new RepeatRunListener();
         notifier.addListener(listener);
 
         /* handle ignore Annot. */
@@ -54,6 +53,7 @@ public class RepeatRunner extends BlockJUnit4ClassRunner {
         } else {
             testName = method.getAnnotation(Repeat.class).testName();
         }
+        listener.setTestName(testName);
 
         /* repeat unit test */
         for (int i =0; i<count; ++i) {
@@ -73,11 +73,11 @@ public class RepeatRunner extends BlockJUnit4ClassRunner {
             logMsg.append("RepetitionTest: ")
                     .append(testName)
                     .append(", total_count: ")
-                    .append(getTotalCount.invoke(obj,method.getName()))
+                    .append(getTotalCount.invoke(obj,testName))
                     .append(", pass_count: ")
-                    .append(getPassCount.invoke(obj,method.getName()))
+                    .append(getPassCount.invoke(obj,testName))
                     .append(", fail_count: ")
-                    .append(getFailCount.invoke(obj,method.getName()));
+                    .append(getFailCount.invoke(obj,testName));
             logger.info(String.valueOf(logMsg));
 
             /* remove listener */
