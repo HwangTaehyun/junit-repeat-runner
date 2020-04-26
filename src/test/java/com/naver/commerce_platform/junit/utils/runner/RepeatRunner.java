@@ -1,5 +1,8 @@
-package com.naver.commerce_platform.junit;
+package com.naver.commerce_platform.junit.utils.runner;
 
+import com.naver.commerce_platform.junit.test.CalculatorTest;
+import com.naver.commerce_platform.junit.utils.annotation.Repeat;
+import com.naver.commerce_platform.junit.utils.listener.RepeatRunListener;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
@@ -47,10 +50,11 @@ public class RepeatRunner extends BlockJUnit4ClassRunner {
                 throw new IllegalArgumentException("count값은 1 이상이어야 합니다.");
             } catch (IllegalArgumentException e) {
                 logger.error("Error:" +e.getMessage());
-                return;
             } finally {
                 /* remove listener */
                 notifier.removeListener(listener);
+                logger.info("=============Repetition Test Finished=============");
+                return;
             }
         }
 
@@ -71,7 +75,7 @@ public class RepeatRunner extends BlockJUnit4ClassRunner {
         /* log repetition test summary with RepeatTestInfo(totalCount, passCount, failCount) */
         Class<?> cls = null;
         try {
-            cls = Class.forName("com.naver.commerce_platform.junit."+"RepeatRunListener");
+            cls = Class.forName("com.naver.commerce_platform.junit.utils.listener."+"RepeatRunListener");
             Object obj = cls.getDeclaredConstructor().newInstance();
             Method getTotalCount = cls.getMethod("getTotalCount", String.class);
             Method getPassCount = cls.getMethod("getPassCount", String.class);

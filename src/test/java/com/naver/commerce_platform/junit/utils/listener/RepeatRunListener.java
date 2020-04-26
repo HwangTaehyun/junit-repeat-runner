@@ -1,5 +1,7 @@
-package com.naver.commerce_platform.junit;
+package com.naver.commerce_platform.junit.utils.listener;
 
+import com.naver.commerce_platform.junit.test.CalculatorTest;
+import com.naver.commerce_platform.junit.utils.info.RepeatTestInfo;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
@@ -17,10 +19,6 @@ public class RepeatRunListener extends RunListener {
     /* fail flag */
     private boolean failed = false;
     private String testName;
-
-    RepeatRunListener() {
-        super();
-    }
 
     public int getTotalCount(String testName){
         return this.testResult.get(testName).totalCount;
