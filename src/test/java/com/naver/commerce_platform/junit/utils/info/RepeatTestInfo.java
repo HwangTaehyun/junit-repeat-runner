@@ -1,4 +1,4 @@
-package com.naver.commerce_platform.junit;
+package com.naver.commerce_platform.junit.utils.info;
 
 public class RepeatTestInfo {
     public int totalCount = 0;

@@ -1,5 +1,8 @@
-package com.naver.commerce_platform.junit;
+package com.naver.commerce_platform.junit.test;
 
+import com.naver.commerce_platform.junit.Calculator;
+import com.naver.commerce_platform.junit.utils.runner.RepeatRunner;
+import com.naver.commerce_platform.junit.utils.annotation.Repeat;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
