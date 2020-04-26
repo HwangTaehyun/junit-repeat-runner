@@ -8,6 +8,7 @@ import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
+import org.junit.runners.model.Statement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,9 +69,39 @@ public class RepeatRunner extends BlockJUnit4ClassRunner {
         }
         listener.setTestName(testName);
 
+        /* define retryMethodBlock inner func */
+        String finalTestName = testName;
+        Statement retryMethodBlock = new Statement() {
+            @Override
+            public void evaluate() throws Throwable {
+                Throwable caughtThrowable = null;
+                int retryCount = method.getAnnotation(Repeat.class).retryCount();
+                /* if retryCount == 0, no retry */
+                if (retryCount == 0) {
+                    methodBlock(method).evaluate();
+                    return;
+                }
+                /* retry loop */
+                for (int i = 0; i <= retryCount; i++) {
+                    try {
+                        methodBlock(method).evaluate();
+                        return;
+                    } catch (Throwable t) {
+                        caughtThrowable = t;
+                        if (i != retryCount) {
+                            logger.error(finalTestName + " unit test failed with "+t.getMessage());
+                            logger.error(finalTestName + " unit test rerun " + (i+1));
+                        }
+                    }
+                }
+                logger.error(finalTestName+ " unit test giving up after " + retryCount + " retry");
+                throw caughtThrowable;
+            }
+        };
+
         /* repeat unit test */
         for (int i =0; i<count; ++i) {
-            runLeaf(methodBlock(method), description, notifier);
+            runLeaf(retryMethodBlock, description, notifier);
         }
 
         /* log repetition test summary with RepeatTestInfo(totalCount, passCount, failCount) */

@@ -49,6 +49,21 @@ public class CalculatorTest {
     }
 
     @Test
+    @Repeat(count = 5, testName = "rerun-failed", retryCount = 3)
+    public void testReRunFailedTest() {
+        //Arrange
+        Calculator calculator = new Calculator();
+        int x = (int)(2*Math.random());
+        int y = (int)(2*Math.random());
+
+        //Act
+        int result = calculator.add(x,y);
+
+        //Assert
+        assertThat(result).isEqualTo(1);
+    }
+
+    @Test
     @Repeat(count = 2, testName = "repeat-2")
     public void testMyCode2TimesWithName() {
         //Arrange
