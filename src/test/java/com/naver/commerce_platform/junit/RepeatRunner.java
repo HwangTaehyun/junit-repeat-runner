@@ -43,7 +43,15 @@ public class RepeatRunner extends BlockJUnit4ClassRunner {
 
         /* if count < 1, throw IllegalArgumentException */
         if (count < 1) {
-            throw new IllegalArgumentException("count값은 1 이상이어야 합니다.");
+            try {
+                throw new IllegalArgumentException("count값은 1 이상이어야 합니다.");
+            } catch (IllegalArgumentException e) {
+                logger.error("Error:" +e.getMessage());
+                return;
+            } finally {
+                /* remove listener */
+                notifier.removeListener(listener);
+            }
         }
 
         /* set testName */
