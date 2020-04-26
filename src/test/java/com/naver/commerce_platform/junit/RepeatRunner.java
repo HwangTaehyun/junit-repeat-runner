@@ -90,6 +90,8 @@ public class RepeatRunner extends BlockJUnit4ClassRunner {
 
             /* remove listener */
             notifier.removeListener(listener);
+
+            logger.info("=============Repetition Test Finished=============");
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } catch (InstantiationException e) {
