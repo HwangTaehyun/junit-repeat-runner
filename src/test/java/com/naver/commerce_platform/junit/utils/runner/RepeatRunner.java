@@ -11,9 +11,6 @@ import org.junit.runners.model.InitializationError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
 public class RepeatRunner extends BlockJUnit4ClassRunner {
     static final Logger logger =
             LoggerFactory.getLogger(CalculatorTest.class);
@@ -24,12 +21,15 @@ public class RepeatRunner extends BlockJUnit4ClassRunner {
     @Override
     protected void runChild(final FrameworkMethod method, RunNotifier notifier) {
         logger.info("=============Repetition Test Start=============");
+
+        /* get description of method */
+        Description description = describeChild(method);
+
         /* add listener */
         RepeatRunListener listener = new RepeatRunListener();
         notifier.addListener(listener);
 
         /* handle ignore Annot. */
-        Description description = describeChild(method);
         if (isIgnored(method)) {
             notifier.fireTestIgnored(description);
             return;
@@ -49,18 +49,14 @@ public class RepeatRunner extends BlockJUnit4ClassRunner {
         /* get repetition count */
         int count = method.getAnnotation(Repeat.class).count();
 
-        /* if count < 1, throw IllegalArgumentException */
-        if (count < 1) {
-            try {
-                throw new IllegalArgumentException("count값은 1 이상이어야 합니다.");
-            } catch (IllegalArgumentException e) {
-                logger.error("Error:" +e.getMessage());
-            } finally {
-                /* remove listener */
-                notifier.removeListener(listener);
-                logger.info("=============Repetition Test Finished=============");
-                return;
-            }
+        /* if count < 1, throw Exception */
+        try {
+            this.checkRepetitionCount(count);
+        } catch (Exception e) {
+            logger.error("Error:" +e.getMessage());
+            logger.info("=============Repetition Test Finished=============");
+            notifier.removeListener(listener);
+            return;
         }
 
         /* set testName */
@@ -78,39 +74,31 @@ public class RepeatRunner extends BlockJUnit4ClassRunner {
         }
 
         /* log repetition test summary with RepeatTestInfo(totalCount, passCount, failCount) */
-        Class<?> cls = null;
-        try {
-            cls = Class.forName("com.naver.commerce_platform.junit.utils.listener."+"RepeatRunListener");
-            Object obj = cls.getDeclaredConstructor().newInstance();
-            Method getTotalCount = cls.getMethod("getTotalCount", String.class);
-            Method getPassCount = cls.getMethod("getPassCount", String.class);
-            Method getFailCount = cls.getMethod("getFailCount", String.class);
-            StringBuffer logMsg = new StringBuffer("");
+        this.logRepetitionUnitTestResult(listener, testName);
 
-            logMsg.append("RepetitionTest: ")
-                    .append(testName)
-                    .append(", total_count: ")
-                    .append(getTotalCount.invoke(obj,testName))
-                    .append(", pass_count: ")
-                    .append(getPassCount.invoke(obj,testName))
-                    .append(", fail_count: ")
-                    .append(getFailCount.invoke(obj,testName));
-            logger.info(String.valueOf(logMsg));
+        /* remove listener */
+        notifier.removeListener(listener);
 
-            /* remove listener */
-            notifier.removeListener(listener);
+        logger.info("=============Repetition Test Finished=============");
+    }
 
-            logger.info("=============Repetition Test Finished=============");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
+    private void logRepetitionUnitTestResult(RepeatRunListener listener, String testName) {
+        StringBuffer logMsg = new StringBuffer("");
+
+        logMsg.append("RepetitionTest: ")
+                .append(testName)
+                .append(", total_count: ")
+                .append(listener.getTotalCount(testName))
+                .append(", pass_count: ")
+                .append(listener.getPassCount(testName))
+                .append(", fail_count: ")
+                .append(listener.getFailCount(testName));
+        logger.info(String.valueOf(logMsg));
+    }
+
+    private void checkRepetitionCount(int count) throws Exception {
+        if (count < 1) {
+            throw new Exception("count값은 1 이상이어야 합니다.");
         }
     }
 }
