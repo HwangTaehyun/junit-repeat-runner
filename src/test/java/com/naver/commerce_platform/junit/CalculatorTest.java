@@ -16,7 +16,7 @@ public class CalculatorTest {
             LoggerFactory.getLogger(CalculatorTest.class);
 
     @Test
-    @Repeat(count = -1, testName = "invalid-repeat-count-test")
+    @Repeat(count = -1, testName = "invalid-repeat-count")
     public void testInvalidCountRepeat() {
         //Arrange
         Calculator calculator = new Calculator();
@@ -31,7 +31,7 @@ public class CalculatorTest {
     }
 
     @Test
-    @Repeat(count = 5, testName = "random-assert-test")
+    @Repeat(count = 5, testName = "random-assert")
     public void testRandomAssert() {
         //Arrange
         Calculator calculator = new Calculator();
