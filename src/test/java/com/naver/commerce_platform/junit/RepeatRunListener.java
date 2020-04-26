@@ -1,7 +1,6 @@
 package com.naver.commerce_platform.junit;
 
 import org.junit.runner.Description;
-import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
 import org.slf4j.Logger;
@@ -17,63 +16,61 @@ public class RepeatRunListener extends RunListener {
     private static Map<String, RepeatTestInfo> testResult = new HashMap<>();
     /* fail flag */
     private boolean failed = false;
+    private String testName;
 
-    public int getTotalCount(String methodName){
-        return this.testResult.get(methodName).totalCount;
-    }
-    public int getPassCount(String methodName){
-        return this.testResult.get(methodName).passCount;
-    }
-    public int getFailCount(String methodName){
-        return this.testResult.get(methodName).failCount;
+    RepeatRunListener() {
+        super();
     }
 
-    @Override
-    public void testRunStarted(Description description) throws Exception {
-        System.out.println("Number of tests to execute: " + description.testCount());
+    public int getTotalCount(String testName){
+        return this.testResult.get(testName).totalCount;
     }
-
-    @Override
-    public void testRunFinished(Result result) throws Exception {
-        System.out.println("Number of tests executed: " + result.getRunCount());
+    public int getPassCount(String testName){
+        return this.testResult.get(testName).passCount;
+    }
+    public int getFailCount(String testName){
+        return this.testResult.get(testName).failCount;
+    }
+    public void setTestName(String testName) {
+        this.testName = testName;
     }
 
     @Override
     public void testStarted(Description description) throws Exception {
-        logger.info("{} unit test starting...", description);
+        logger.info("{} unit test starting...", testName);
     }
 
     @Override
     public void testFinished(Description description) throws Exception {
         if (!this.failed) {
             /* Process passed tests here */
-            logger.info("{} unit test succeeded.", description.getMethodName());
-            RepeatTestInfo testInfo = testResult.get(description.getMethodName());
+            logger.info("{} unit test succeeded.", testName);
+            RepeatTestInfo testInfo = testResult.get(testName);
             if (testInfo == null) {
-                testResult.put(description.getMethodName(),new RepeatTestInfo());
+                testResult.put(testName,new RepeatTestInfo());
             }
-            testResult.get(description.getMethodName()).passCount++;
+            testResult.get(testName).passCount++;
         }
-        logger.info("{} unit test finished...", description);
-        testResult.get(description.getMethodName()).totalCount++;
+        logger.info("{} unit test finished...", testName);
+        testResult.get(testName).totalCount++;
         this.failed=false;
     }
 
     @Override
     public void testFailure(Failure failure) throws Exception {
         /* Process failed tests here */
-        logger.error("{} unit test failed with {}.", failure.getDescription().getMethodName(), failure.getMessage());
-        RepeatTestInfo testInfo = testResult.get(failure.getDescription().getMethodName());
+        logger.error("{} unit test failed with {}.", testName, failure.getMessage());
+        RepeatTestInfo testInfo = testResult.get(testName);
         if (testInfo == null) {
-            testResult.put(failure.getDescription().getMethodName(),new RepeatTestInfo());
+            testResult.put(testName,new RepeatTestInfo());
         }
-        testResult.get(failure.getDescription().getMethodName()).failCount++;
+        testResult.get(testName).failCount++;
         this.failed = true;
     }
 
     @Override
     public void testIgnored(Description description) throws Exception {
         /* Process ignored tests here */
-        logger.info("Ignored: " + description.getMethodName());
+        logger.info("Ignored: " + testName);
     }
 }
