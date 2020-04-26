@@ -10,6 +10,7 @@ import java.lang.annotation.Target;
 public @interface Repeat {
     int count() default 1;
     String testName() default "";
+    int retryCount() default 0;
 }
 
 
